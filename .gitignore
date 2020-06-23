@@ -1,0 +1,6 @@
+
+# some mac files
+.DS_Store
+
+# do not store images in the repository
+*.jpg
