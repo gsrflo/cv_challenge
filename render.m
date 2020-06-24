@@ -19,14 +19,18 @@ bg = zeros(600,800);
 foreground = zeros(600,800);
 background = zeros(600,800);
 
+debug = false;
+
 % ---- for debugging, add dummies -------
-input_image = imread("pic1.jpg");
-mode = 4;
-% dummy mask
-mask = ones(600,800);
-mask = triu(mask);
-% dummy bg
-bg = imread("pic2.jpg");
+if debug
+    input_image = imread("pic1.jpg");
+    mode = "foreground";
+    % dummy mask
+    mask = ones(600,800);
+    mask = triu(mask);
+    % dummy bg
+    bg = imread("pic2.jpg");
+end
 %----------------------------------------
 
 
@@ -45,7 +49,7 @@ bg_b = dbl_bg_image(:,:,3);
 
 % distinguish modes
 switch mode
-    case 1
+    case "foreground"
         % Case 1: foreground
         disp("case1 selected")
         
@@ -59,7 +63,7 @@ switch mode
         output_image(:,:,2) = foreground_g;
         output_image(:,:,3) = foreground_b;
         output_image = uint8(output_image);
-    case 2
+    case "background"
         % Case 2: background
         disp("case2 selected")
         
@@ -74,7 +78,7 @@ switch mode
         output_image(:,:,3) = background_b;
         output_image = uint8(output_image);
         
-    case 3
+    case "overlay"
         % Case 3: overlay
         disp("case3 selected")
         
@@ -99,7 +103,7 @@ switch mode
         output_image(:,:,3) = overlay_b;
         output_image = uint8(output_image);
         
-    case 4
+    case "substitute"
         % Case 4: substitute
         disp("case4 selected")
         
