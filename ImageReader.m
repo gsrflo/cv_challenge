@@ -29,7 +29,7 @@
 %           -> if loop=1, next call of next() starts at 0000000.jpg
 
 %% How To
-% 1: Assign a source: src='/Documents/Berni/04_TUM/SS20/ComputerVision/Challenge/P1E_S1'    
+% 1: Assign a source: src='/Documents/Berni/04_TUM/SS20/ComputerVision/Challenge/P1E_S1'
 % 2: Create an ImageReader-instance: ir=ImageReader('src',src,'L',1,'R',2,'start',1498,'N',50);
 % 3: Call the next-method: [left,right,loop,ab] = ir.next();
 
@@ -38,14 +38,14 @@
 classdef ImageReader
 
   properties
-    src%base folder src
-    L%which camera should be left cam
-    R%which camera should be right cam
-    start%which frame to start
-    N%amount of following frames, default=1
-    targetL%target folder left cam
-    targetR%target folder right cam
-    loop% default = 0, if loop=1 folder ran out of images, next one starts at 00000000.jpg
+    src % base folder src
+    L % which camera should be left cam
+    R % which camera should be right cam
+    start % which frame to start
+    N % amount of following frames, default=1
+    targetL % target folder left cam
+    targetR % target folder right cam
+    loop % default = 0, if loop=1 folder ran out of images, next one starts at 00000000.jpg
   end
 
   methods
@@ -141,49 +141,35 @@ classdef ImageReader
         end
 
       end
-<<<<<<< HEAD
-      
-      function [startInd,endInd] = startFrameToStartList(irObj,data)
-          %Function for getting start value in the list
-          
-          % Convert number into strin of form '0000xxxx,jpg'
-          startStr=strcat(num2str(irObj.start,'%08.f'),'.jpg');
-          
-          % Find index of starting frame
-          indexArr = strfind(data{1},startStr);
-          startInd = find(not(cellfun('isempty',indexArr)));
-          
-          % Check if given 'start'-value is valid
-          if isempty(startInd)
-            error('Given variable "start" is not a starting frame. Please choose a valid value!')
-          else
-            endInd=size(data{1},1);
-          end
-=======
 
-      % Update the start property of the class
-      if irObj.loop == 0
-        irObj.start = str2double(data{1}{ind}(1:8)) + irObj.N;
-      else
-        irObj.start = 0;
-        %disp('Starting from new again')
->>>>>>> 58228324ba56ca4d0a589bef7e682b71d8321504
+      function [startInd, endInd] = startFrameToStartList(irObj, data)
+        %Function for getting start value in the list
+
+        % Convert number into strin of form '0000xxxx,jpg'
+        startStr = strcat(num2str(irObj.start, '%08.f'), '.jpg');
+
+        % Find index of starting frame
+        indexArr = strfind(data{1}, startStr);
+        startInd = find(not(cellfun('isempty', indexArr)));
+
+        % Check if given 'start'-value is valid
+        if isempty(startInd)
+          error('Given variable "start" is not a starting frame. Please choose a valid value!')
+        else
+          endInd = size(data{1}, 1);
+        end
+
+        % Update the start property of the class
+        if irObj.loop == 0
+          irObj.start = str2double(data{1}{ind}(1:8)) + irObj.N;
+        else
+          irObj.start = 0;
+          %disp('Starting from new again')
+        end
+
+        loop = irObj.loop;
       end
 
-      loop = irObj.loop;
-    end
-
-    function [startInd, endInd] = startFrameToStartList(irObj, data)
-      %Function for getting start value in the list
-
-      % Convert number into strin of form '0000xxxx,jpg'
-      startStr = strcat(num2str(irObj.start, '%08.f'), '.jpg');
-
-      % Find index of starting frame
-      indexArr = strfind(data{1}, startStr);
-      startInd = find(not(cellfun('isempty', indexArr)));
-
-      endInd = size(data{1}, 1);
     end
 
   end

@@ -2,28 +2,27 @@
 
 %% General Settings
 % Group number:
-% group_number = 0;
+group_number = 0;
 
 % Group members:
-% members = {'Max Mustermann', 'Johannes Daten'};
+members = {'Max Mustermann'};
 
 % Email-Address (from Moodle!):
-% mail = {'ga99abc@tum.de', 'daten.hannes@tum.de'};
+mail = {'ga99abc@tum.de'};
 
 %% Setup Image Reader
 % Specify Scene Folder
-src = "Path/to/my/ChokePoint/P1E_S1";
+src = "ChokePoint\P1E_S1";
 
 % Select Cameras
-L = 1
-R = 2
+L = 1;
+R = 2;
 
 % Choose a start point
-start = randi(1000)
+start = randi(1000);
 
 % Choose the number of succeeding frames
-N = 5
-
+N = 5;
 ir = ImageReader(src, L, R, start, N);
 
 %% Output Settings
@@ -37,11 +36,11 @@ dst = "output.avi";
 mode = "substitute";
 
 % Create a movie array
-height_px = 600
-width_px = 800
-nr_total_frames = 5000
+height_px = 600;
+width_px = 800;
+nr_total_frames = 5000;
 % Sequence of RGB images (height x width x 3 x frames)
-movie = zeros(height_px, width_px, 3, nr_total_frames)
+movie = zeros(height_px, width_px, 3, nr_total_frames);
 
 % Store Output?
 store = false;
