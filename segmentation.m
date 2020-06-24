@@ -6,6 +6,14 @@ function [mask] = segmentation(left,right)
   %right: tensor of the current image + N follow-up images from right camera
   %mask: segmentation mask - entries with 1: foreground
   
+  % Author: Johannes Teutsch
+  % Log:  - 20200622: Setting up initial structure
+  %       - 20200624: Extended by alternative: vision.ForegroundDetector
+
+  % TODO: - finding parameters with best result
+  %       - finding method with lowest computation time
+
+
   %% Background estimation
   %Number of follow-up Images
   N = size(left,3)/3 - 1;
@@ -67,15 +75,18 @@ function [mask] = segmentation(left,right)
   
   %Computer Vison Toolbox: Foreground Detector
   %{
-  
+
   %creating detector object:
-  detector = vision.ForegroundDetector;
-  
+  num_trainframes = 30;
+  detector = vision.ForegroundDetector('NumTrainingFrames',num_trainframes);
+
   %learning-phase of detector using the background estimate
+  for i=1:num_trainframes
   detector(bg);
-  
+  end
+
   %foreground detection;
   mask = detector(left(:,:,1:3));
-  
+
   %}
 end
