@@ -4,3 +4,6 @@
 
 # do not store images in the repository
 *.jpg
+
+# do not store images directory
+Chokepoint/

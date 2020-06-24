@@ -1,6 +1,6 @@
 %% Computer Vision Challenge 2020 config.m
 
-%% Generall Settings
+%% General Settings
 % Group number:
 % group_number = 0;
 
@@ -22,7 +22,7 @@ src = "Path/to/my/ChokePoint/P1E_S1";
 % Choose a start point
 % start = randi(1000)
 
-% Choose the number of succseeding frames
+% Choose the number of succeeding frames
 % N =
 
 ir = ImageReader(src, L, R, start, N);
@@ -39,7 +39,11 @@ dst = "output.avi";
 mode = "substitute";
 
 % Create a movie array
-% movie =
+height_px = 600
+width_px = 800
+% nr_total_frames = 
+% Sequence of RGB images (height x width x 3 x frames)
+% movie = zeros(height_px, width_px, 3, nr_total_frames)
 
 % Store Output?
 store = true;
