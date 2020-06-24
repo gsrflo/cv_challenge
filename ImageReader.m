@@ -29,7 +29,7 @@
 %           -> if loop=1, next call of next() starts at 0000000.jpg
 
 %% How To
-% 1: Assign a source: src='/Documents/Berni/04_TUM/SS20/ComputerVision/Challenge/P1E_S1'
+% 1: Assign a source:src='ChokePoint/P1E_S1'
 % 2: Create an ImageReader-instance: ir=ImageReader('src',src,'L',1,'R',2,'start',1498,'N',50);
 % 3: Call the next-method: [left,right,loop,ab] = ir.next();
 
@@ -57,7 +57,7 @@ classdef ImageReader
         p = inputParser;
 
         % Set default values for inputs
-        default_src = './joman/this_is_a_test_string_char';
+        default_src = 'ChokePoint/P1E_S1';
         default_start = 0;
         default_N = 1;
 
@@ -86,7 +86,7 @@ classdef ImageReader
         % Read targets
         [irObj.targetL, irObj.targetR] = readSrc(irObj);
 
-        %next stack of images
+        % next stack of images
       else
         error('Wrong number of input arguments')
       end
@@ -97,8 +97,8 @@ classdef ImageReader
       % Function for reading/generating source-path
       L_str = num2str(irObj.L);
       R_str = num2str(irObj.R);
-      targetL = strcat(irObj.src, irObj.src((end - 6):end), '_C', L_str, irObj.src(end - 6));
-      targetR = strcat(irObj.src, irObj.src((end - 6):end), '_C', R_str, irObj.src(end - 6));
+      targetL = strcat(irObj.src, irObj.src((end - 6):end), '_C', L_str, '/');
+      targetR = strcat(irObj.src, irObj.src((end - 6):end), '_C', R_str, '/');
     end
 
     function [left, right, loop, irObj] = next(irObj)
@@ -107,7 +107,7 @@ classdef ImageReader
       % This algorithm takes image list from left camera as reference
 
       % Initialize containers
-      left = []; right = []; irObj.loop = 0;
+      left = []; right = [];
 
       % Read filenames from text-file in respective folder
       f = fopen(strcat(irObj.targetL, 'all_file.txt'));
@@ -121,13 +121,13 @@ classdef ImageReader
       filenames = cell2mat(data{1, 1});
 
       % Get N+1 images and stack them into 600x800x[(N+1)*3]
-      for ind = startInd:(startInd + irObj.N)
-        %display(strcat('startIndex is ',num2str(ind)));
+      for ind = startInd:(startInd + irObj.N + 1)
+        %display(strcat('startIndex is ', num2str(ind)));
 
         if ind <= endInd
-          %display(strcat('listIndex is ',data{1}{ind}(1:8)));
+          %display(strcat('listIndex is ', data{1}{ind}(1:8)));
           % If current index is smaller/equal the end of the list
-          irObj.loop = 0;
+          loop = 0;
           % Call path and get current image
           currentImageL = imread(strcat(irObj.targetL, filenames(ind, 1:12)));
           currentImageR = imread(strcat(irObj.targetR, filenames(ind, 1:12)));
@@ -137,7 +137,7 @@ classdef ImageReader
           right = cat(3, right, currentImageR);
         else
           % If current index is greater the end of the list
-          irObj.loop = 1;
+          loop = 1;
         end
 
       end

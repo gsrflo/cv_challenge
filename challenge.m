@@ -5,18 +5,18 @@ t_start = tic;
 
 % Initialize indices
 loop = 0;
-i = 1;
+i = 0;
 
 %% Generate Movie
 
 while loop ~= 1
+  i = i + 1;
   % Get next image tensors
   [left, right, loop] = ir.next();
   % Generate binary mask
   mask = segmentation(left, right);
   % Render new frame
-  movie(:, :, :, i:(N + i + 1)) = render(left(:, :, 1), mask, bg, mode);
-  i = i + 1;
+  movie(:, :, :, i) = render(left(:, :, 1:3), mask, bg, mode);
 end
 
 %% Stop timer here
@@ -26,7 +26,7 @@ fprintf('Elapsed time: %.3f seconds = %.3f minutes\n', elapsed_time, elapsed_tim
 %% Write Movie to Disk
 if store
   % Delete black images from movie array
-  movie_filtered = movie(:, :, :, 1:(N + i + 1));
+  movie_filtered = movie(:, :, :, 1:i);
   v = VideoWriter(dst, 'Motion JPEG AVI');
   v.Quality = 100;
   open(v);
