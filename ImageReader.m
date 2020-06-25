@@ -2,9 +2,10 @@
 % Author: Berni Hausleitner
 % Log:  - 20200621: Setting up initial structure and constructor of class
 %       - 20200622: Setting up next method
+%       - 20200625: Bug Fixes for input handling and start param update
 
-% TODO: - start parameter stuff
-%       - relative path handling
+% TODO: - validation of start
+%       - call next() without class
 
 % function should be able to process two videostreams from one folder into
 % an endless loop
@@ -41,49 +42,76 @@ classdef ImageReader
     src % base folder src
     L % which camera should be left cam
     R % which camera should be right cam
-    start % which frame to start
+    start % framenumber to start with
     N % amount of following frames, default=1
     targetL % target folder left cam
     targetR % target folder right cam
-    loop % default = 0, if loop=1 folder ran out of images, next one starts at 00000000.jpg
+    startArray % current start of Array Index
+    endArray % end of current array, size of current array
+    data % cell array with filenames of current list
   end
 
   methods
 
+%% Constructor for ImageReader
+% assigns inputvalues and check validity
     function irObj = ImageReader(src, L, R, varargin)%start N (start is optional)    
         % Constructor method        
         % assign and check validity of src 
         try irObj.src = char(src);
         catch
-            error('Input argument src must be a string or char.')
+            error('Input argument ''src'' must be a string or char.')
         end
         
         % assign check validity of L
         if isnumeric(L) && ((L == 1) || (L == 2))
-            irObj.L = L; 
+            irObj.L = L;
+            %Read target path for Left Camera
+            L_str = num2str(irObj.L);
+            irObj.targetL = strcat(irObj.src, irObj.src((end - 6):end), '_C', L_str, '/');
         else
-            error('Input argument L must be numeric and value 1 or 2.')
+            error('Input argument ''L'' must be numeric and value 1 or 2.')
         end
         
         % assign check validity of R
         if isnumeric(R) && ((R == 2) || (R == 3))
             irObj.R = R;
+            %Read target path for Right Camera
+            R_str = num2str(irObj.R);
+            irObj.targetR = strcat(irObj.src, irObj.src((end - 6):end), '_C', R_str, '/'); 
         else
-            error('Input argument R must be numeric and value 2 or 3.')
+            error('Input argument ''R'' must be numeric and value 2 or 3.')
         end
         
         if nargin ==5
-            % assign and check validity of start (second check later in the code)
+            % assign and check first validity of start (isnumeric)
             if isnumeric(varargin{1}(1))
                 irObj.start = varargin{1}(1);
             else
-                error('Input argument start must be numeric.')
+                error('Input argument ''start'' must be numeric.')
             end
+            
+            % second validity check of start (is Part of Frame List?)
+            % Read filenames from text-file in respective folder
+            f = fopen(strcat(irObj.targetL, 'all_file.txt'));
+            irObj.data = textscan(f, '%s');
+            fclose(f);
+            % Convert number into string of form '0000xxxx,jpg'
+            frameNumber = strcat(num2str(irObj.start, '%08.f'), '.jpg');
+            % Find index of starting frame
+            indexArr = strfind(irObj.data{1}, frameNumber);
+            % Get startvalue   
+            irObj.startArray = find(not(cellfun('isempty', indexArr)));
+            if isempty(irObj.startArray)
+                error('Input argument ''start'' must be a valid frame-number.')
+            end
+            
+            
             % assign and check validity of N
             if isnumeric(varargin{2}(1))
                 irObj.N = varargin{2}(1);
             else
-                error('Input argument N must be numeric.')
+                error('Input argument ''N'' must be numeric.')
             end
         elseif nargin == 4
             irObj.start = 0;
@@ -91,25 +119,19 @@ classdef ImageReader
             if isnumeric(varargin{1}(1))
                 irObj.N = varargin{1}(1);
             else
-                error('Input argument N must be numeric.')
+                error('Input argument ''N'' must be numeric.')
             end 
         else
           error('Wrong number of input arguments')
         end      
-  
-      %Read targets
-      [irObj.targetL, irObj.targetR] = readSrc(irObj);
-
+        
     end
     
-      
-    function [targetL, targetR] = readSrc(irObj)
-      % Function for reading/generating source-path
-      L_str = num2str(irObj.L);
-      R_str = num2str(irObj.R);
-      targetL = strcat(irObj.src, irObj.src((end - 6):end), '_C', L_str, '/');
-      targetR = strcat(irObj.src, irObj.src((end - 6):end), '_C', R_str, '/');
-    end
+%% next()-method
+% Function for getting the next N+1 images
+% The image list for all subfolders in a folder P**_S* is identical
+% This algorithm takes image list from left camera as reference
+% exp: N=2: next() -> frame21,frame22,frame23; next() -> frame22,frame23,frame24 
 
     function [left, right, loop, irObj] = next(irObj)
       % Function for getting the next N+1 images
@@ -117,30 +139,30 @@ classdef ImageReader
       % This algorithm takes image list from left camera as reference
 
       % Initialize containers
-      left = []; right = [];
-
+      left = []; right = []; loop=0;
+      
       % Read filenames from text-file in respective folder
       f = fopen(strcat(irObj.targetL, 'all_file.txt'));
-      data = textscan(f, '%s');
+      irObj.data = textscan(f, '%s');
       fclose(f);
+            
+      % End of this filenames list
+      irObj.endArray = size(irObj.data{1}, 1);
 
-      % Get startvalue
-      [startInd, endInd] = startFrameToStartList(irObj, data);
-
-      % Get filenames as a char-array to iterate through
-      filenames = cell2mat(data{1, 1});
+      % End of this filenames list
+      irObj.endArray = size(irObj.data{1}, 1);
 
       % Get N+1 images and stack them into 600x800x[(N+1)*3]
-      for ind = startInd:(startInd + irObj.N + 1)
-        %display(strcat('startIndex is ', num2str(ind)));
+      for ind = irObj.startArray:(irObj.startArray + irObj.N)
+        %display(strcat('startArray is', num2str(ind)));
 
-        if ind <= endInd
-          %display(strcat('listIndex is ', data{1}{ind}(1:8)));
+        if ind <= irObj.endArray
+          display(strcat('startList is', irObj.data{1}{ind}));
           % If current index is smaller/equal the end of the list
           loop = 0;
           % Call path and get current image
-          currentImageL = imread(strcat(irObj.targetL, filenames(ind, 1:12)));
-          currentImageR = imread(strcat(irObj.targetR, filenames(ind, 1:12)));
+          currentImageL = imread(strcat(irObj.targetL, irObj.data{1}{ind}));
+          currentImageR = imread(strcat(irObj.targetR, irObj.data{1}{ind}));
 
           % Stack image into 600x800x[(N+1)*3]
           left = cat(3, left, currentImageL);
@@ -149,37 +171,17 @@ classdef ImageReader
           % If current index is greater the end of the list
           loop = 1;
         end
-
       end
-
-      function [startInd, endInd] = startFrameToStartList(irObj, data)
-        %Function for getting start value in the list
-
-        % Convert number into strin of form '0000xxxx,jpg'
-        startStr = strcat(num2str(irObj.start, '%08.f'), '.jpg');
-
-        % Find index of starting frame
-        indexArr = strfind(data{1}, startStr);
-        startInd = find(not(cellfun('isempty', indexArr)));
-
-        % Check if given 'start'-value is valid
-        if isempty(startInd)
-          error('Given variable "start" is not a starting frame. Please choose a valid value!')
-        else
-          endInd = size(data{1}, 1);
-        end
-
-        % Update the start property of the class
-        if irObj.loop == 0
-          irObj.start = str2double(data{1}{ind}(1:8)) + irObj.N;
-        else
-          irObj.start = 0;
-          %disp('Starting from new again')
-        end
-
-        loop = irObj.loop;
+      
+      % Update the start property of the class
+      if loop == 0
+        % If list did not reach the end yet
+        irObj.startArray = irObj.startArray +1;
+      else
+        % If list did reach the end
+        irObj.startArray = 0;
+        %disp('Starting from new again')
       end
-
     end
 
   end
