@@ -12,7 +12,7 @@ mail = {'ga99abc@tum.de'};
 
 %% Setup Image Reader
 % Specify Scene Folder
-src = 'ChokePoint/P1E_S1';
+%src = 'challenge/P1E_S1';
 
 % Select Cameras
 L = 1;
@@ -23,7 +23,7 @@ start = randi(1000);
 
 % Choose the number of succeeding frames
 N = 5;
-ir = ImageReader('src', src, 'L', L, 'R', R, 'start', start, 'N', N);
+ir = ImageReader(src, L, R, start, N);
 
 %% Output Settings
 % Output Path

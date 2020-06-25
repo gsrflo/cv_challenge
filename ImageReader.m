@@ -4,8 +4,7 @@
 %       - 20200622: Setting up next method
 %       - 20200625: Bug Fixes for input handling and start param update
 
-% TODO: - validation of start
-%       - call next() without class
+% TODO: - call next() without class
 
 % function should be able to process two videostreams from one folder into
 % an endless loop
@@ -31,7 +30,7 @@
 
 %% How To
 % 1: Assign a source:src='ChokePoint/P1E_S1'
-% 2: Create an ImageReader-instance: ir=ImageReader('src',src,'L',1,'R',2,'start',1498,'N',50);
+% 2: Create an ImageReader-instance: ir=ImageReader(src,1,,2,,1498,50);
 % 3: Call the next-method: [left,right,loop,ab] = ir.next();
 
 %% Implementation
