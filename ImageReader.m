@@ -50,49 +50,59 @@ classdef ImageReader
 
   methods
 
-    function irObj = ImageReader(varargin)
-      % Constructor method
-      if nargin > 3
-        % Create Input Parser instance
-        p = inputParser;
-
-        % Set default values for inputs
-        default_src = 'ChokePoint/P1E_S1';
-        default_start = 0;
-        default_N = 1;
-
-        % Check-function for input variables
-        checkL = @(x) isnumeric(x) && ((x == 1) || (x == 2));
-        checkR = @(x) isnumeric(x) && ((x == 2) || (x == 3));
-        checkSrc = @(x) isa(x, 'char') || isa(x, 'string');
-
-        % Add Params to the Parser-Instance
-        addParameter(p, 'src', default_src, checkSrc)
-        addParameter(p, 'L', @isnumeric, checkL)
-        addParameter(p, 'R', @isnumeric, checkR)
-        addOptional(p, 'start', default_start, @isnumeric)
-        addParameter(p, 'N', default_N, @isnumeric)
-
-        % Fill the varargin matrix
-        parse(p, varargin{:})
-
-        % Assign the output values
-        irObj.src = p.Results.src;
-        irObj.L = p.Results.L;
-        irObj.R = p.Results.R;
-        irObj.start = p.Results.start;
-        irObj.N = p.Results.N;
-
-        % Read targets
-        [irObj.targetL, irObj.targetR] = readSrc(irObj);
-
-        % next stack of images
-      else
-        error('Wrong number of input arguments')
-      end
+    function irObj = ImageReader(src, L, R, varargin)%start N (start is optional)    
+        % Constructor method        
+        % assign and check validity of src 
+        try irObj.src = char(src);
+        catch
+            error('Input argument src must be a string or char.')
+        end
+        
+        % assign check validity of L
+        if isnumeric(L) && ((L == 1) || (L == 2))
+            irObj.L = L; 
+        else
+            error('Input argument L must be numeric and value 1 or 2.')
+        end
+        
+        % assign check validity of R
+        if isnumeric(R) && ((R == 2) || (R == 3))
+            irObj.R = R;
+        else
+            error('Input argument R must be numeric and value 2 or 3.')
+        end
+        
+        if nargin ==5
+            % assign and check validity of start (second check later in the code)
+            if isnumeric(varargin{1}(1))
+                irObj.start = varargin{1}(1);
+            else
+                error('Input argument start must be numeric.')
+            end
+            % assign and check validity of N
+            if isnumeric(varargin{2}(1))
+                irObj.N = varargin{2}(1);
+            else
+                error('Input argument N must be numeric.')
+            end
+        elseif nargin == 4
+            irObj.start = 0;
+            % assign and check validity of N
+            if isnumeric(varargin{1}(1))
+                irObj.N = varargin{1}(1);
+            else
+                error('Input argument N must be numeric.')
+            end 
+        else
+          error('Wrong number of input arguments')
+        end      
+  
+      %Read targets
+      [irObj.targetL, irObj.targetR] = readSrc(irObj);
 
     end
-
+    
+      
     function [targetL, targetR] = readSrc(irObj)
       % Function for reading/generating source-path
       L_str = num2str(irObj.L);
