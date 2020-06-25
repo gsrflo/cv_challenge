@@ -8,6 +8,7 @@ function [mask] = segmentation(left, right)
   % Author: Johannes Teutsch
   % Log:  - 20200622: Setting up initial structure
   %       - 20200624: Extended by alternative: vision.ForegroundDetector
+  %       - 20200625: Minor updates + switch case to choose detector
 
   % TODO: - finding parameters with best result
   %       - finding method with lowest computation time
@@ -18,7 +19,7 @@ function [mask] = segmentation(left, right)
 
   %Reduced number of follow-up images for background estimation (to
   %increase speed by using less images)
-  Nr = 15;
+  Nr = 20;
 
   if (Nr > N)
     Nr = N;
@@ -33,63 +34,81 @@ function [mask] = segmentation(left, right)
   bg(:, :, 3) = uint8(median(left(:, :, 3:3:(Nr + 1) * 3), 3));
 
   %% Compute foreground mask:
-  %Idea: the foreground is detected by substracting the background from the
-  %images and compare the error between the current image and the median
-  %of all images.
+  
+  %mode to switch between the methods. 
+  %mode=0: Compare to background
+  %mode=1: vision.ForegroundDetector
+  mode = 0;
+  
+  switch mode
+      case 0
+        %% Compare to background
+        %Idea: the foreground is detected by substracting the background from the
+        %images and compare the error between the current image and the median
+        %of all images.
 
-  %tensor of repeated background image - same size as left
-  bgrep = repmat(bg, [1, 1, size(left, 3) / 3]);
+        %tensor of repeated background image - same size as left
+        bgrep = repmat(bg, [1, 1, size(left, 3) / 3]);
 
-  %NOTE: substracting variables of type uint8 gives 0 instead of negative
-  %values! This is used here to give 'positive' and 'negative' deviations
-  %different weights.
+        %NOTE: substracting variables of type uint8 gives 0 instead of negative
+        %values! This is used here to give 'positive' and 'negative' deviations
+        %different weights.
+        
+        %positive deviation: image brighter than median
+        dev_pos = rgb2gray(left(:, :, 1:3) - bg - median(left - bgrep, 3));
 
-  %positive deviation: image brighter than median
-  dev_pos = rgb2gray(left(:, :, 1:3) - bg - median(left - bgrep, 3));
+        %negative deviation: median brighter than image
+        dev_neg = rgb2gray(bg - left(:, :, 1:3) - median(bgrep - left, 3));
 
-  %negative deviation: median brighter than image
-  dev_neg = rgb2gray(bg - left(:, :, 1:3) - median(bgrep - left, 3));
+        %bound for positive deviation:
+        bound_pos = 20;
 
-  %bound for positive deviation:
-  bound_pos = 2;
+        %bound for negative deviation:
+        bound_neg = 20;
+        
+        %foreground mask:
+        mask = (dev_pos > bound_pos) | (dev_neg > bound_neg);
 
-  %bound for negative deviation:
-  bound_neg = 20;
+        %getting rid of noise: imerode
+        %smothing / filling out holes: imdilate, imclose
+        %you can play with these (change order, params; leave one out;...):
+        
+        mask = imclose(mask,strel('disk',3));
+        mask = imerode(mask,strel('disk',7));    
+        mask = imdilate(mask,strel('disk',7));
+        mask = imclose(mask,strel('disk',100));
+    
+        %convertion to uint8, so that the mask can later be used like: img.*mask
+        mask = uint8(mask);
 
-  %foreground mask:
-  mask = (dev_pos > bound_pos) | (dev_neg > bound_neg);
+      case 1
+        %% Alternative
 
-  %getting rid of noise:
-  mask = imerode(mask, strel('disk', 5));
+        %Computer Vison Toolbox: Foreground Detector
+        
+        %number of training frames for learing phase;
+        num_trainframes = 20;
+        
+        %creating detector object:
+        detector = vision.ForegroundDetector('NumTrainingFrames',num_trainframes);
 
-  %smothing / filling out holes:
-  %mask = imdilate(mask,strel('disk',10));
-  mask = imclose(mask, strel('disk', 200));
+        %learning-phase of detector using the background estimate
+        for i=1:num_trainframes
+        detector(bg);
+        end
 
-  %convertion to uint8, so that the mask can later be used like: img.*mask
-  mask = uint8(mask);
+        %foreground detection;
+        mask = detector(left(:,:,1:3));
 
-  %% Alternative
+        %you can play with these (change order, change parameters):
+        mask = imclose(mask,strel('disk',3));
+        mask = imerode(mask,strel('disk',7));    
+        mask = imdilate(mask,strel('disk',7));
+        mask = imclose(mask,strel('disk',100));
 
-  %Computer Vison Toolbox: Foreground Detector
-  %{
-
-  %creating detector object:
-  num_trainframes = 30;
-  detector = vision.ForegroundDetector('NumTrainingFrames',num_trainframes);
-
-  detector = vision.ForegroundDetector;
-
-  %learning-phase of detector using the background estimate
-  for i=1:num_trainframes
-  detector(bg);
+        %convertion to uint8, so that the mask can later be used like: img.*mask
+        mask = uint8(mask);
+        
   end
-
-  %foreground detection;
-  mask = detector(left(:,:,1:3));
-
-  %foreground detection;
-  mask = detector(left(:, :, 1:3));
-
-  %}
+  
 end
