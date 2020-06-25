@@ -12,7 +12,7 @@ mail = {'ga99abc@tum.de'};
 
 %% Setup Image Reader
 % Specify Scene Folder
-%src = 'challenge/P1E_S1';
+src = 'Chokepoint/P1E_S1';
 
 % Select Cameras
 L = 1;
