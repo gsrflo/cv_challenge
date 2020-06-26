@@ -20,7 +20,7 @@ function [result] = render(frame, mask, bg, mode)
     mask = uint8(ones(600, 800));
     mask = triu(mask);
     % dummy bg
-    bg = imread("pic2.jpg");
+    bg = imread("pic4.jpg");
   end
 
   %----------------------------------------
@@ -72,7 +72,10 @@ function [result] = render(frame, mask, bg, mode)
 
     case "substitute"
       % Case 4: substitute
-
+      
+      % resizing bg image to 800x600px
+      bg = imresize(bg, [600,800]);
+          
       % change foreground
       foreground = frame .* mask;
 
