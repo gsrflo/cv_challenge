@@ -30,8 +30,7 @@ ir = ImageReader(src, L, R, start, N);
 dst = "output.avi";
 
 % Load Virual Background
-% bg = imread("Path\to\my\virtual\background")
-bg = 0;
+bg = imread("windows_background.jpg");
 
 % Select rendering mode
 mode = "substitute";

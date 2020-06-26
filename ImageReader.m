@@ -41,7 +41,6 @@ classdef ImageReader
     src % base folder src
     L % which camera should be left cam
     R % which camera should be right cam
-    start % framenumber to start with
     N % amount of following frames, default=1
     targetL % target folder left cam
     targetR % target folder right cam
@@ -54,7 +53,7 @@ classdef ImageReader
 
 %% Constructor for ImageReader
 % assigns inputvalues and check validity
-    function irObj = ImageReader(src, L, R, varargin)%start N (start is optional)    
+    function irObj = ImageReader(src, L, R, varargin) % start N (start is optional)    
         % Constructor method        
         % assign and check validity of src 
         try irObj.src = char(src);
@@ -82,26 +81,23 @@ classdef ImageReader
             error('Input argument ''R'' must be numeric and value 2 or 3.')
         end
         
+        % Read filenames from text-file in respective folder
+        f = fopen(strcat(irObj.targetL, 'all_file.txt'));
+        all_files = textscan(f, '%s');
+        irObj.data = all_files{1};
+        fclose(f);
+        
         if nargin ==5
             % assign and check first validity of start (isnumeric)
             if isnumeric(varargin{1}(1))
-                irObj.start = varargin{1}(1);
+                irObj.startArray = varargin{1}(1);
             else
                 error('Input argument ''start'' must be numeric.')
             end
-            
+
             % second validity check of start (is Part of Frame List?)
-            % Read filenames from text-file in respective folder
-            f = fopen(strcat(irObj.targetL, 'all_file.txt'));
-            irObj.data = textscan(f, '%s');
-            fclose(f);
-            % Convert number into string of form '0000xxxx,jpg'
-            frameNumber = strcat(num2str(irObj.start, '%08.f'), '.jpg');
-            % Find index of starting frame
-            indexArr = strfind(irObj.data{1}, frameNumber);
-            % Get startvalue   
-            irObj.startArray = find(not(cellfun('isempty', indexArr)));
-            if isempty(irObj.startArray)
+            % Get startvalue
+            if irObj.startArray > size(irObj.data, 1)
                 error('Input argument ''start'' must be a valid frame-number.')
             end
             
@@ -112,8 +108,9 @@ classdef ImageReader
             else
                 error('Input argument ''N'' must be numeric.')
             end
+
         elseif nargin == 4
-            irObj.start = 0;
+            irObj.startArray = 0;
             % assign and check validity of N
             if isnumeric(varargin{1}(1))
                 irObj.N = varargin{1}(1);
@@ -140,28 +137,20 @@ classdef ImageReader
       % Initialize containers
       left = []; right = []; loop=0;
       
-      % Read filenames from text-file in respective folder
-      f = fopen(strcat(irObj.targetL, 'all_file.txt'));
-      irObj.data = textscan(f, '%s');
-      fclose(f);
-            
       % End of this filenames list
-      irObj.endArray = size(irObj.data{1}, 1);
-
-      % End of this filenames list
-      irObj.endArray = size(irObj.data{1}, 1);
+      irObj.endArray = size(irObj.data, 1);
 
       % Get N+1 images and stack them into 600x800x[(N+1)*3]
       for ind = irObj.startArray:(irObj.startArray + irObj.N)
         %display(strcat('startArray is', num2str(ind)));
 
         if ind <= irObj.endArray
-          display(strcat('startList is', irObj.data{1}{ind}));
+          disp(['startList is ', irObj.data{ind}]);
           % If current index is smaller/equal the end of the list
           loop = 0;
           % Call path and get current image
-          currentImageL = imread(strcat(irObj.targetL, irObj.data{1}{ind}));
-          currentImageR = imread(strcat(irObj.targetR, irObj.data{1}{ind}));
+          currentImageL = imread(strcat(irObj.targetL, irObj.data{ind}));
+          currentImageR = imread(strcat(irObj.targetR, irObj.data{ind}));
 
           % Stack image into 600x800x[(N+1)*3]
           left = cat(3, left, currentImageL);

@@ -25,7 +25,7 @@ function [result] = render(frame, mask, bg, mode)
 
   %----------------------------------------
 
-  mask_inv = uint8(ones(size(mask))) - mask;
+  mask_inv = uint8(~mask);
 
   % distinguish modes
   switch mode
@@ -77,6 +77,7 @@ function [result] = render(frame, mask, bg, mode)
       foreground = frame .* mask;
 
       % keep background
+      bg = imresize(bg, [600, 800]);
       background = bg .* mask_inv;
 
       % merge foreground and background
