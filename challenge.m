@@ -26,10 +26,12 @@ fprintf('Elapsed time: %.3f seconds = %.3f minutes\n', elapsed_time, elapsed_tim
 %% Write Movie to Disk
 if store
   % Delete black images from movie array
-  movie_filtered = movie(:, :, :, 1:i);
   v = VideoWriter(dst, 'Motion JPEG AVI');
   v.Quality = 100;
   open(v);
-  writeVideo(v, movie_filtered);
+  for j = 1:i
+    frame = im2frame(movie(:, :, :, j));
+    writeVideo(v, frame);
+  end
   close(v);
 end

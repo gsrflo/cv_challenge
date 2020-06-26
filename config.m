@@ -38,9 +38,9 @@ mode = "substitute";
 % Create a movie array
 height_px = 600;
 width_px = 800;
-nr_total_frames = 500;
+nr_total_frames = 1000;
 % Sequence of RGB images (height x width x 3 x frames)
-movie = zeros(height_px, width_px, 3, nr_total_frames);
+movie = zeros(height_px, width_px, 3, nr_total_frames, 'uint8');
 
 % Store Output?
 store = false;
