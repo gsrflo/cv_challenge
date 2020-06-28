@@ -7,6 +7,15 @@ t_start = tic;
 loop = 0;
 i = 0;
 
+if store
+  % Create a movie array
+  height_px = 600;
+  width_px = 800;
+  nr_total_frames = 3000;
+  % Sequence of RGB images (height x width x 3 x frames)
+  movie = zeros(height_px, width_px, 3, nr_total_frames, 'uint8');
+end
+
 %% Generate Movie
 
 while loop ~= 1
@@ -16,7 +25,11 @@ while loop ~= 1
   % Generate binary mask
   mask = segmentation(left, right);
   % Render new frame
-  movie(:, :, :, i) = render(left(:, :, 1:3), mask, bg, mode);
+  if store
+    movie(:, :, :, i) = render(left(:, :, 1:3), mask, bg, mode);
+  else
+    render(left(:, :, 1:3), mask, bg, mode);
+  end
 end
 
 %% Stop timer here
@@ -25,7 +38,7 @@ fprintf('Elapsed time: %.3f seconds = %.3f minutes\n', elapsed_time, elapsed_tim
 
 %% Write Movie to Disk
 if store
-  % Delete black images from movie array
+  % default frame rate for the VideoWriter object is 30 frames per second
   v = VideoWriter(dst, 'Motion JPEG AVI');
   v.Quality = 100;
   open(v);
