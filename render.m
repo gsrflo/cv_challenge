@@ -12,7 +12,7 @@ function [result] = render(frame, mask, bg, mode)
 % 4 - substitute: substitute background with "bg"
 %
 
-debug = true;
+debug = false;
 
 % ---- for debugging, add dummies -------
 if debug
@@ -134,7 +134,7 @@ switch mode
         implay(result);
         
     otherwise
-        disp("Error: no mode selected")
+        error("Error: no mode selected")
 end
 
 
