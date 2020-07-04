@@ -21,7 +21,7 @@ end
 while loop ~= 1
   i = i + 1;
   % Get next image tensors
-  [left, right, loop, ir] = ir.next();
+  [left, right, loop] = ir.next();
   % Generate binary mask
   mask = segmentation(left, right);
   % Render new frame

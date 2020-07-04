@@ -35,7 +35,7 @@
 
 %% Implementation
 
-classdef ImageReader
+classdef ImageReader < handle
 
   properties
     src % base folder src
@@ -129,7 +129,7 @@ classdef ImageReader
 % This algorithm takes image list from left camera as reference
 % exp: N=2: next() -> frame21,frame22,frame23; next() -> frame22,frame23,frame24 
 
-    function [left, right, loop, irObj] = next(irObj)
+    function [left, right, loop] = next(irObj)
       % Function for getting the next N+1 images
       % The image list for all subfolders in a folder P**_S* is identical
       % This algorithm takes image list from left camera as reference
@@ -145,7 +145,7 @@ classdef ImageReader
         %display(strcat('startArray is', num2str(ind)));
 
         if ind <= irObj.endArray
-          disp(['startList is ', irObj.data{ind}]);
+          disp(['Current Frame processesd ', irObj.data{ind}]);
           % If current index is smaller/equal the end of the list
           loop = 0;
           % Call path and get current image
@@ -164,7 +164,7 @@ classdef ImageReader
       % Update the start property of the class
       if loop == 0
         % If list did not reach the end yet
-        irObj.startArray = irObj.startArray +1;
+        irObj.startArray = irObj.startArray+1;
       else
         % If list did reach the end
         irObj.startArray = 0;
