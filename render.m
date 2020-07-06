@@ -2,7 +2,7 @@ function [result] = render(frame, mask, bg, mode)
 %% Computer Vision Challenge - Object Detection - render.m
 %
 % Author: Florian Geiser
-% June 2020; Last revision: 26-06-2020
+% July 2020; Last revision: 06-07-2020
 
 % Overview
 % 4 Modes:
@@ -25,14 +25,16 @@ if debug
     mask3 = zeros(600, 150);
     mask = uint8([mask1 mask2 mask3]);
     % dummy background
-    bg = imread("pic4.jpg");
+    bg = imread("windows_background.jpg");
     % dummy gif
     gif = "nyan_cat.gif";
 end
 
 %----------------------------------------
 
-  mask_inv = uint8(~mask);
+% invert mask for background mode
+mask_inv = uint8(~mask);
+
 
 % distinguish modes
 switch mode
@@ -97,41 +99,6 @@ switch mode
         result = foreground + background;
         
         imshow(result);
-        
-    case "gif"
-        % Case 5: put gif as background
-        
-        % load gif and define parameters
-        [gif_image, cmap] = imread(gif, 'Frames', 'all');
-        [~, ~, ~, num_images] = size(gif_image);
-        
-        % construct an empty movie by initializing dimensions
-        result = zeros(600, 800, 3, num_images, 'uint8');
-        
-        % loop thru every frame
-        for i = 1 : num_images
-            
-          % choose frame and convert it  
-          % Multiply with 255: colormaps read in from GIFs represent colors
-          % in the range 0 to 1, rather than integers 0 to 255
-          gif_frame = gif_image(:,:,:, i);
-          gif_frame_rgb = uint8(255 * ind2rgb(gif_frame, cmap));
-          
-          % resize image and define foreground and background
-          gif_frame_rgb = imresize(gif_frame_rgb, [600,800]);
-          foreground = frame .* mask;
-          background = gif_frame_rgb .* mask_inv;
-          
-          % merge foreground and background
-          single_pic = foreground + background;
-          
-          % set pictures to an 4D array
-          result(:,:,:,i) = single_pic;
-
-        end
-        
-        % show gif
-        implay(result);
         
     otherwise
         error("Error: no mode selected")
