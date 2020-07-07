@@ -4,6 +4,7 @@
 
 # do not store images in the repository
 *.jpg
+*.asv
 !windows_background.jpg
 # do not store images directory
 Chokepoint/

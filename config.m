@@ -6,11 +6,23 @@ group_number = 10;
 
 % Group members:
 
-members = {'Florian Geiser'};
+members = {
+        'Florian Geiser',
+        'Bernhard Hausleitner',
+        'Michael Ebnicher',
+        'Johannes Teutsch',
+        'Xavier Oliver i Jürgens'
+        };
 
 % Email-Address (from Moodle!):
 
-mail = {'florian.geiser@tum.de'};
+mail = {
+      'florian.geiser@tum.de',
+      'bernhard.hausleitner@tum.de',
+      '',
+      '',
+      'xavi.oliva@tum.de'
+      };
 
 %% Setup Image Reader
 % Specify Scene Folder
@@ -37,16 +49,15 @@ bg_name = "nyan_cat.gif";
 
 % distinguish between jpg and gif
 try
-    [gif_image, cmap] = imread(bg_name, 'Frames', 'all');
-    gif = 1;
+  [gif_image_raw, cmap] = imread(bg_name, 'Frames', 'all');
+  gif = 1;
 catch
-    bg = imread(bg_name);
-    gif = 0;
+  bg = imread(bg_name);
+  gif = 0;
 end
-
 
 % Select rendering mode
 mode = "substitute";
 
 % Store Output?
-store = false;
+store = true;
