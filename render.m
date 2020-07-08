@@ -2,7 +2,7 @@ function [result] = render(frame, mask, bg, mode)
 %% Computer Vision Challenge - Object Detection - render.m
 %
 % Author: Florian Geiser
-% July 2020; Last revision: 06-07-2020
+% July 2020; Last revision: 08-07-2020
 
 % Overview
 % 4 Modes:
@@ -12,29 +12,8 @@ function [result] = render(frame, mask, bg, mode)
 % 4 - substitute: substitute background with "bg"
 %
 
-debug = false;
-
-% ---- for debugging, add dummies -------
-if debug
-    % dummy picture
-    frame = imread("pic1.jpg");
-    mode = "gif";
-    % dummy mask
-    mask1 = zeros(600, 450);
-    mask2 = ones(600, 200);
-    mask3 = zeros(600, 150);
-    mask = uint8([mask1 mask2 mask3]);
-    % dummy background
-    bg = imread("windows_background.jpg");
-    % dummy gif
-    gif = "nyan_cat.gif";
-end
-
-%----------------------------------------
-
 % invert mask for background mode
 mask_inv = uint8(~mask);
-
 
 % distinguish modes
 switch mode
@@ -44,14 +23,12 @@ switch mode
         % keep foreground, set background black
         result = frame .* mask;
         
-        imshow(result);
     case "background"
         % Case 2: background
         
         % keep background, set foreground black
         result = frame .* mask_inv;
         
-        imshow(result);
     case "overlay"
         % Case 3: overlay
         
@@ -80,9 +57,7 @@ switch mode
         result(:, :, 1) = overlay_r;
         result(:, :, 2) = overlay_g;
         result(:, :, 3) = overlay_b;
-        
-        imshow(result);
-        
+                
     case "substitute"
         % Case 4: substitute
         
@@ -97,9 +72,7 @@ switch mode
         
         % merge foreground and background
         result = foreground + background;
-        
-        imshow(result);
-        
+                
     otherwise
         error("Error: no mode selected")
 end
