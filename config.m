@@ -20,7 +20,7 @@ mail = {
       'florian.geiser@tum.de',
       'bernhard.hausleitner@tum.de',
       'johannes.teutsch@tum.de',
-      '',
+      'm.ebnicher@tum.de',
       'xavi.oliva@tum.de'
       };
 
