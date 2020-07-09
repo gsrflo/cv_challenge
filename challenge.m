@@ -40,6 +40,8 @@ if gif
 end
 
 %% Generate Movie
+%current frame number (middle frame in tensor "left")
+Nr = floor((N+1)/2);
 
 while loop ~= 1
   i = i + 1;
@@ -55,7 +57,7 @@ while loop ~= 1
 
   % Render new frame
   if store
-    movie(:, :, :, i) = render(left(:, :, 1:3), mask, bg, mode);
+    movie(:, :, :, i) = render(left(:, :, 3*Nr-2:3*Nr), mask, bg, mode);
   else
     render(left(:, :, 1:3), mask, bg, mode);
   end
@@ -70,7 +72,7 @@ fprintf('Elapsed time: %.3f seconds = %.3f minutes\n', elapsed_time, elapsed_tim
 if store
   % default frame rate for the VideoWriter object is 30 frames per second
   v = VideoWriter(dst, 'Motion JPEG AVI');
-  v.Quality = 100;
+  v.Quality = 75;
   open(v);
 
   for j = 1:i
