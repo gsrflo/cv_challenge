@@ -72,7 +72,7 @@ fprintf('Elapsed time: %.3f seconds = %.3f minutes\n', elapsed_time, elapsed_tim
 %% Write Movie to Disk
 if store
   % default frame rate for the VideoWriter object is 30 frames per second
-  v = VideoWriter(dst, 'Motion JPEG AVI');
+  v = VideoWriter(dest, 'Motion JPEG AVI');
   v.Quality = 75;
   open(v);
 

@@ -41,7 +41,7 @@ ir = ImageReader(src, L, R, start, N);
 
 %% Output Settings
 % Output Path
-dst = "output.avi";
+dest = "output.avi";
 
 % Load Virtual Background
 % enter .jpg file or .gif file
