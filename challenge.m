@@ -58,8 +58,9 @@ while loop ~= 1
   % Render new frame
   if store
     movie(:, :, :, i) = render(left(:, :, 3*Nr-2:3*Nr), mask, bg, mode);
+    %imshow(movie(:,:,:,i));
   else
-    render(left(:, :, 3*Nr-2:3*Nr), mask, bg, mode);
+    imshow(render(left(:, :, 3*Nr-2:3*Nr), mask, bg, mode));
   end
 
 end
