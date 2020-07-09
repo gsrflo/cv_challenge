@@ -59,7 +59,7 @@ while loop ~= 1
   if store
     movie(:, :, :, i) = render(left(:, :, 3*Nr-2:3*Nr), mask, bg, mode);
   else
-    render(left(:, :, 1:3), mask, bg, mode);
+    render(left(:, :, 3*Nr-2:3*Nr), mask, bg, mode);
   end
 
 end
