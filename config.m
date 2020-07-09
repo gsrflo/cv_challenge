@@ -19,7 +19,7 @@ members = {
 mail = {
       'florian.geiser@tum.de',
       'bernhard.hausleitner@tum.de',
-      '',
+      'johannes.teutsch@tum.de',
       '',
       'xavi.oliva@tum.de'
       };
