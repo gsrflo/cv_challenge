@@ -90,11 +90,7 @@ classdef ImageReader < handle
         if nargin ==5
             % assign and check first validity of start (isnumeric)
             if isnumeric(varargin{1}(1))
-                if varargin{1}(1) == 0
-                    irObj.startArray = 1; % startframe is 00000000.jpg -> array_ind = 1
-                else
-                    irObj.startArray = varargin{1}(1);
-                end
+                irObj.startArray = varargin{1}(1);
             else
                 error('Input argument ''start'' must be numeric.')
             end
@@ -114,7 +110,7 @@ classdef ImageReader < handle
             end
 
         elseif nargin == 4
-            irObj.startArray = 1; % frame is 00000000.jpg -> array_ind = 1
+            irObj.startArray = 0;
             % assign and check validity of N
             if isnumeric(varargin{1}(1))
                 irObj.N = varargin{1}(1);
@@ -146,10 +142,10 @@ classdef ImageReader < handle
 
       % Get N+1 images and stack them into 600x800x[(N+1)*3]
       for ind = irObj.startArray:(irObj.startArray + irObj.N)
-        %display(strcat('startArray is', num2str(ind)));
+        display(strcat('startArray is', num2str(ind)));
 
         if ind <= irObj.endArray
-          disp(['Current frame processed ', irObj.data{ind}]);
+          %disp(['Current frame processed ', irObj.data{ind}]);
           % If current index is smaller/equal the end of the list
           loop = 0;
           % Call path and get current image
