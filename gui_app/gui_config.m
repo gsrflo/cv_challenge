@@ -1,8 +1,12 @@
 % basic configuration after parameters in gui have been set
-%function gui_config()
-    ir = ImageReader(src, L, R, start, N);
-    
-    % Load background image
-    bg = imread(background_path);
+ir = ImageReader(src, L, R, start, N);
 
-%end
+% distinguish between jpg and gif
+% copied from conifg.m
+try
+  [gif_image_raw, cmap] = imread(bg_name, 'Frames', 'all');
+  gif = 1;
+catch
+  bg = imread(bg_name);
+  gif = 0;
+end
