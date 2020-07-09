@@ -149,7 +149,7 @@ classdef ImageReader < handle
         %display(strcat('startArray is', num2str(ind)));
 
         if ind <= irObj.endArray
-          disp(['Current frame processed ', irObj.data{ind}]);
+          
           % If current index is smaller/equal the end of the list
           loop = 0;
           % Call path and get current image
