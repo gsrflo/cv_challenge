@@ -1,8 +1,8 @@
-function [result] = render(frame, mask, bg, mode)
+function [result] = render(frame, mask, bg, render_mode)
 %% Computer Vision Challenge - Object Detection - render.m
 %
 % Author: Florian Geiser
-% July 2020; Last revision: 08-07-2020
+% July 2020; Last revision: 10-07-2020
 
 % Overview
 % 4 Modes:
@@ -16,7 +16,7 @@ function [result] = render(frame, mask, bg, mode)
 mask_inv = uint8(~mask);
 
 % distinguish modes
-switch mode
+switch render_mode
     case "foreground"
         % Case 1: foreground
         
