@@ -41,7 +41,6 @@ end
 
 %% Generate Movie
 %current frame number (middle frame in tensor "left")
-Nr = floor((N+1)/2);
 
 while loop ~= 1
   i = i + 1;
@@ -57,10 +56,10 @@ while loop ~= 1
 
   % Render new frame
   if store
-    movie(:, :, :, i) = render(left(:, :, 3*Nr-2:3*Nr), mask, bg, mode);
+    movie(:, :, :, i) = render(left(:, :, 1:3), mask, bg, mode);
     %imshow(movie(:,:,:,i));
   else
-    imshow(render(left(:, :, 3*Nr-2:3*Nr), mask, bg, mode));
+    imshow(render(left(:, :, 1:3), mask, bg, mode));
   end
 
 end
