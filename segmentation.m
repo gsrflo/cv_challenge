@@ -18,15 +18,15 @@
     %Initialize background estimate
     bg = uint8(zeros(size(left(:, :, 1:3))));
 
-    vec=[1,(N + 1) * 3 - 2];                %only first and last element of tensor is taken for rough background-estimation -> faster
-    %vec = 1:3:(N + 1) * 3 - 2;             %take every element of tensor for background-estimation
+    bg_frames=[1,(N + 1) * 3 - 2];                %only first and last element of tensor is taken for rough background-estimation -> faster
+    %bg_frames = 1:3:(N + 1) * 3 - 2;             %take every element of tensor for background-estimation
     
     %Estimate background via median of images
-    bg(:, :, 1) = uint8(median(left(:, :, vec    ), 3));        %red
-    bg(:, :, 2) = uint8(median(left(:, :, vec + 1), 3));        %green
-    bg(:, :, 3) = uint8(median(left(:, :, vec + 2), 3));        %blue
+    bg(:, :, 1) = uint8(median(left(:, :, bg_frames    ), 3));        %red
+    bg(:, :, 2) = uint8(median(left(:, :, bg_frames + 1), 3));        %green
+    bg(:, :, 3) = uint8(median(left(:, :, bg_frames + 2), 3));        %blue
   
-    %% Comparison with Background:
+    %% Movement Detection:
   
     % Idea: the foreground is detected by substracting the background from the
     % images and compare the error between the 1st image and the 3rd image 
@@ -62,16 +62,16 @@
     %Removing noise (pixel areas < 30)
     mask = bwareaopen(mask, 30,8);
 
-    %%Edge Detection: 
+    %% Edge Detection: 
     
     edg_window=imdilate(mask,strel('square',30));         %Take only the edge near the already detected mask
     edg1=edge(rgb2gray(left(:, :, 3*(3)-2:3*(3))),'Sobel',0.01).*edg_window;
     edg2=edge(rgb2gray(left(:, :, 1:3)),'Sobel',0.01).*edg_window;
 
-    %Adding the detected difference in edges to the mask
+    %Adding the detected difference in edges to the mask, diltate edges (thickening)
     mask = mask | bwmorph(bitxor(uint8(edg1), uint8(edg2)),'dilate');
     
-    %%Post Processing:
+    %% Post Processing:
     
     %Removing noise
     mask = bwareaopen(mask, 50,8);
@@ -87,7 +87,7 @@
     mask = ~imopen(bwareaopen(~mask, 10000,8),strel('square',60));
 
     %Fill remaining holes 
-    mask(end-1,find(mask(end-1,:),1,'first'):find(mask(end-1,:),1,'last'))=1;
+    mask(end-1,find(mask(end-1,:),1,'first'):find(mask(end-1,:),1,'last'))=1;  %this is used to close bays (i.e., get holes) at the bottom of the image
     mask=imfill(mask,'holes');
 
     %Smooth edges of mask
