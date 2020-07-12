@@ -4,6 +4,11 @@ demo for the computer vision lecture at TUM
 ## Best practice
 To get the best result, please use the following settings:
 
+The following MATLAB Toolboxes are mandatory:
+- Image Processing Toolbox
+- Parallel Computing Toolbox
+- Mapping Toolbox
+
 To run the code without the GUI, set the following parameters inside config.m and run the script:
 - `src`: Source Path pointing to the source folder of the ChokePoint dataset, string or char array
 - `L`: Selection for left videostream, numeric values {1,2}
@@ -11,11 +16,11 @@ To run the code without the GUI, set the following parameters inside config.m an
 - `start`: Starting frame number for segmentation, numeric inbetween framenumber range of folder (optional)
 - `bg_name`: Name of the background image / video. This needs to be of type jpg, png or gif (for videos). Note that the corresponding file has to lie in the same folder ad config.m
 - `mode`: Rendering mode, variable of type string, either "foreground", "background", "overlay", or "substitute".
-- `store`: Flag which states to store the resulting movie or not, logical values {true, false}. If `store = true`, then the current rendered image is not shown, and only the resulting movie is stored  with the name "output.avi" and can be viewed. If `store = false`, then each rendered frame is shown. The upper bound of 30 minutes of computation time for all folders is only guaranteed for the case of `store = true`.
+- `store`: Flag which states to store the resulting movie or not, logical values {true, false}. If `store = true`, then the current rendered image is not shown, and only the resulting movie is stored  with the name "output.avi" and can be viewed. If `store = false`, then each rendered frame is shown.
 
-After config.m was run, challenge.m can be run to start the rendering and work through all frames of the folder, starting with the frame number `start`.
+After config.m was run, challenge.m can be executed to start the rendering and work through all frames of the folder, starting with the frame number `start`.
 
-If the GUI is used, config.m and challenge.m can be neglected, because the GUI subsitutes these scripts.
+If the GUI is used, config.m and challenge.m can be neglected, because the GUI subsitutes these scripts. The computation time strongly depends on the avaiable cores of the processor (the used Image Processing functions rely on Parallel Computing methods). On all our computer systems and the EIKON server, the computation time remained under 30 minutes, also for the largest folder. After the script worked through all images, it takes some time to store the movie, so just wait until the "Show Results"-Button on the GUI is available to see the movie (this may take some minutes).
 
 To use an animated background, please use the GIF format.
 Therefore, just hand over the desired background to the *bg_name* variable.
