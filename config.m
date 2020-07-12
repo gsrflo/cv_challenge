@@ -11,7 +11,7 @@ members = {
         'Bernhard Hausleitner',
         'Michael Ebnicher',
         'Johannes Teutsch',
-        'Xavier Oliver i Jürgens'
+        'Xavier Oliver i Juergens'
         };
 
 % Email-Address (from Moodle!):
