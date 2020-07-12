@@ -3,10 +3,22 @@ demo for the computer vision lecture at TUM
 
 ## Best practice
 To get the best result, please use the following settings:
-....
+
+To run the code without the GUI, set the following parameters inside config.m and run the script:
+- `src`: Source Path pointing to the source folder of the ChokePoint dataset, string or char array
+- `L`: Selection for left videostream, numeric values {1,2}
+- `R`: Selection for right videostream, numeric values {2,3}
+- `start`: Starting frame number for segmentation, numeric inbetween framenumber range of folder (optional)
+- `bg_name`: Name of the background image / video. This needs to be of type jpg, png or gif (for videos). Note that the corresponding file has to lie in the same folder ad config.m
+- `mode`: Rendering mode, variable of type string, either "foreground", "background", "overlay", or "substitute".
+- `store`: Flag which states to store the resulting movie or not, logical values {true, false}. If `store = true`, then the current rendered image is not shown, and only the resulting movie is stored  with the name "output.avi" and can be viewed. If `store = false`, then each rendered frame is shown. The upper bound of 30 minutes of computation time for all folders is only guaranteed for the case of `store = true`.
+
+After config.m was run, challenge.m can be run to start the rendering and work through all frames of the folder, starting with the frame number `start`.
+
+If the GUI is used, config.m and challenge.m can be neglected, because the GUI subsitutes these scripts.
 
 To use an animated background, please use the GIF format.
-Therefor, just hand over the desired background to the *bg_name* variable.
+Therefore, just hand over the desired background to the *bg_name* variable.
 To get the best experience, please use GIFs with a dedicated "Download" button (e.g. https://gifer.com/en) and do not right-click and save as image.
 
 ## ImageReader
@@ -42,6 +54,8 @@ This public class method can be called the following way:
 ```matlab
   [left, right, loop] = ir.next();
 ```
+## Segmentation
+The method was developed for `N = 5`, so 5 following images are loaded additonal to the current image. The first and last loaded images are used to roughly estimate the background. Better segmentation results can be retrieved if `N` is increased and all images are used for the background estimation. This can be done by setting `bg_frames = 1:3:(N + 1) * 3 - 2` (i.e., deactivate line 21 and actvate line 22 in segmentation.m). Note that due to the additional computational load, it is not guaranteed that the computation time remains under 30 minutes for all folders. We recommend to use the current setup. If it is desired to change the parameter `N`, note that the segmentation function requires `N>=2`.
 
 ## GUI
 To start the gui, run
