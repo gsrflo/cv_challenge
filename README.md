@@ -23,12 +23,12 @@ To get the best experience, please use GIFs with a dedicated "Download" button (
 
 ## ImageReader
 
-The `ImageReader` converts the respective video stream of the dataset into actionable matrices and tensors. The class constructor returns a class object containing following properties:
-- `src`: Source Path pointing to the source folder of the ChokePoint dataset, string or char array
+The `ImageReader` converts the respective video stream of the dataset into actionable matrices and tensors. The class constructor returns a class object `ir`.
+<!--  `src`: Source Path pointing to the source folder of the ChokePoint dataset, string or char array
 - `L`: Selection for left videostream, numeric values {1,2}
 - `R`: Selection for right videostream, numeric values {2,3}
 - `start`: Starting frame number for segmentation, numeric inbetween framenumber range of folder (optional)
-- `N`: Number of returned consecutive frames, numeric
+- `N`: Number of returned consecutive frames, numeric -->
 
 The class constructor returns a class object `ir` and can be called the following way:
 
@@ -44,12 +44,10 @@ As the variable `start` is optional, the constructor can be also called with 4 i
 
 ### next() Method
 
-This public method is part of the `ImageReader` class and iteratively fills up tensors `left` and `right` starting from the prior intialized sarting frame number `start`. Following output variables will be returned: 
-- `left`: Tensor containing left video stream, shape _600 x 800 x (N+1)*3_, numeric
+This public method is part of the `ImageReader` class and iteratively fills up tensors `left` and `right` starting from the prior intialized sarting frame number `start`. This public class method can be called the following way:
+<!-- - `left`: Tensor containing left video stream, shape _600 x 800 x (N+1)*3_, numeric
 - `right`: Tensor containing right video stream, shape _600 x 800 x (N+1)*3_, numeric
-- `loop`: Overflow flag in case ender of frame numer range of folder is reached, numeric values {0,1} 
-
-This public class method can be called the following way:
+- `loop`: Overflow flag in case ender of frame numer range of folder is reached, numeric values {0,1} --->
 
 ```matlab
   [left, right, loop] = ir.next();
