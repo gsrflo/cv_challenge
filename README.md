@@ -60,6 +60,14 @@ This public method is part of the `ImageReader` class and iteratively fills up t
 ## Segmentation
 The method was developed for `N = 5`, so 5 following images are loaded additonal to the current image. The first and last loaded images are used to roughly estimate the background. Better segmentation results can be retrieved if `N` is increased and all images are used for the background estimation. This can be done by setting `bg_frames = 1:3:(N + 1) * 3 - 2` (i.e., deactivate line 21 and actvate line 22 in segmentation.m). Note that due to the additional computational load, it is not guaranteed that the computation time remains under 30 minutes for all folders. We recommend to use the current setup. If it is desired to change the parameter `N`, note that the segmentation function requires `N>=2`.
 
+## Rendering
+Within the render.m file, the rendering of each frame is processed. To accomplish a proper rendering, the segmentation matrix is used to split foreground (i.e. the moving objects) and background (i.e. static objects). In addition, a distinction between the 4 rendering modes is happening here:
+
+- Foreground: Keep the foreground and set the background black.
+- Background: Keep the background and set the foreground black.
+- Overlay: Set foreground and background to different, but transparent colors.
+- Substitute: Keep the foreground and substitute the background with a desired picture or video clip.
+
 ## GUI
 To start the gui, run
 ```matlab
