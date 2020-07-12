@@ -35,7 +35,7 @@
 
 %% Implementation
 
-classdef ImageReader
+classdef ImageReader < handle
 
   properties
     src % base folder src
@@ -53,7 +53,7 @@ classdef ImageReader
 
 %% Constructor for ImageReader
 % assigns inputvalues and check validity
-    function irObj = ImageReader(src, L, R, varargin) % start N (start is optional)    
+    function irObj = ImageReader(src, L, R, varargin) % varargin = [start, N] (start is optional)    
         % Constructor method        
         % assign and check validity of src 
         try irObj.src = char(src);
@@ -90,7 +90,11 @@ classdef ImageReader
         if nargin ==5
             % assign and check first validity of start (isnumeric)
             if isnumeric(varargin{1}(1))
-                irObj.startArray = varargin{1}(1);
+                if varargin{1}(1) == 0
+                    irObj.startArray = 1; % startframe is 00000000.jpg -> array_ind = 1
+                else
+                    irObj.startArray = varargin{1}(1);
+                end
             else
                 error('Input argument ''start'' must be numeric.')
             end
@@ -110,7 +114,7 @@ classdef ImageReader
             end
 
         elseif nargin == 4
-            irObj.startArray = 0;
+            irObj.startArray = 1; % frame is 00000000.jpg -> array_ind = 1
             % assign and check validity of N
             if isnumeric(varargin{1}(1))
                 irObj.N = varargin{1}(1);
@@ -129,7 +133,7 @@ classdef ImageReader
 % This algorithm takes image list from left camera as reference
 % exp: N=2: next() -> frame21,frame22,frame23; next() -> frame22,frame23,frame24 
 
-    function [left, right, loop, irObj] = next(irObj)
+    function [left, right, loop] = next(irObj)
       % Function for getting the next N+1 images
       % The image list for all subfolders in a folder P**_S* is identical
       % This algorithm takes image list from left camera as reference
@@ -145,7 +149,7 @@ classdef ImageReader
         %display(strcat('startArray is', num2str(ind)));
 
         if ind <= irObj.endArray
-          disp(['startList is ', irObj.data{ind}]);
+          
           % If current index is smaller/equal the end of the list
           loop = 0;
           % Call path and get current image
@@ -164,7 +168,7 @@ classdef ImageReader
       % Update the start property of the class
       if loop == 0
         % If list did not reach the end yet
-        irObj.startArray = irObj.startArray +1;
+        irObj.startArray = irObj.startArray+1;
       else
         % If list did reach the end
         irObj.startArray = 0;
