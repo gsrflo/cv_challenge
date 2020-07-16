@@ -81,7 +81,7 @@ Supported backgorund data types are:
 
 Any other settings are optional. Standard values are:
 1. Start Point: 1
-2. Rendering Mode: foreground
+2. Rendering Mode: substitute
 3. Left Image: Sequence 1
 4. Right Image: Sequence 2
 5. Output Video Options: do not store a copy of the video
