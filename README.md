@@ -1,5 +1,6 @@
 # cv_challenge
-demo for the computer vision lecture at TUM
+Coding challenge for the computer vision lecture at TUM.
+Used dataset: http://arma.sourceforge.net/chokepoint/
 
 ## Best practice
 To get the best result, please use the following settings:
